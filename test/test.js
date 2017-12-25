@@ -8,19 +8,19 @@ describe('Base Testing', () => {
         request(server)
             .get('/')
             .end((err, res) => {
-                expect(err).to.not.exist
-                expect(res.status).to.equal(200)
-                done()
-            })
-    })
+                expect(err).to.not.exist;
+                expect(res.status).to.equal(200);
+                done();
+            });
+    });
 
     it('Should have Hello Wolrd!', (done) => {
         request(server)
             .get('/')
             .end((err, res) => {
-                expect(err).to.not.exist
-                expect(res.text).to.equal('Hello World!')
-                done()
-            })
-    })
-})
+                expect(err).to.not.exist;
+                expect(res.text).to.equal('Hello World!');
+                done();
+            });
+    });
+});
