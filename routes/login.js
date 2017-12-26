@@ -7,7 +7,7 @@ function login(req, res) {
             return res.render('login', { csrfToken: req.csrfToken() });
             break;
         case 'POST':
-            var db = new DataBase;
+            // var db = new DataBase;
             var option = {
                 tableName: 'Users',
                 key: {
@@ -15,8 +15,7 @@ function login(req, res) {
                 }
             }
 
-            db.get(option, (result) => {
-                console.log(result);
+            DataBase.get(option, (result) => {
                 if (!result || result.password !== req.body.password) {
                     return res.send('login failed');
                 } else {
