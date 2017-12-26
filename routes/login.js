@@ -1,3 +1,5 @@
+var DataBase = require('../lib/DataBase.js');
+
 function login(req, res) {
     var method = req.method;
     switch (method) {
@@ -5,7 +7,23 @@ function login(req, res) {
             return res.render('login', { csrfToken: req.csrfToken() });
             break;
         case 'POST':
-            return res.send('login success');
+            var db = new DataBase;
+            var option = {
+                tableName: 'Users',
+                key: {
+                    username: req.body.username
+                }
+            }
+
+            db.get(option, (result) => {
+                console.log(result);
+                if (!result || result.password !== req.body.password) {
+                    return res.send('login failed');
+                } else {
+                    return res.send('login success');
+                }
+            });
+
             break;
         default:
             return res.send('Can not ' + method + ' /login');

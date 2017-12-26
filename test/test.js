@@ -1,6 +1,7 @@
 const request = require('supertest');
 const chai = require('chai');
 const cheerio = require('cheerio');
+const sinon = require('sinon');
 const server = require('../index.js');
 const expect = chai.expect;
 
@@ -34,6 +35,7 @@ describe('Login Test', () => {
                 expect(err).to.not.exist;
                 expect(res.status).to.equal(200);
 
+                // Get csrf token
                 var $ = cheerio.load(res.text);
                 var csrfToken = $('input[name=_csrf]').val();
                 var cookie = res.headers['set-cookie'];
@@ -43,6 +45,8 @@ describe('Login Test', () => {
                     .type('form')
                     .set('Cookie', cookie)
                     .send({
+                        username: 'test01',
+                        password: 'test01pwd',
                         _csrf: csrfToken
                     })
                     .end((err, res) => {
