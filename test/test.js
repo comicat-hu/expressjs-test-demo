@@ -40,6 +40,11 @@ describe('Login Test', () => {
                 var $ = cheerio.load(res.text);
                 var csrfToken = $('input[name=_csrf]').val();
                 var cookie = res.headers['set-cookie'];
+                var formData = {
+                    username: 'test01',
+                    password: 'test01pwd',
+                    _csrf: csrfToken
+                };
 
                 // Modify an object
                 var stubbed = sinon.stub(DataBase, 'get').callsFake((option, callback) => {
@@ -48,12 +53,6 @@ describe('Login Test', () => {
                         password: 'test01pwd'
                     });
                 });
-
-                var formData = {
-                    username: 'test01',
-                    password: 'test01pwd',
-                    _csrf: csrfToken
-                };
 
                 request(server)
                     .post('/login')
@@ -64,6 +63,47 @@ describe('Login Test', () => {
                         expect(err).to.not.exist;
                         expect(res.status).to.equal(200);
                         expect(res.text).to.equal('login success');
+
+                        // Restore original method
+                        stubbed.restore();
+
+                        done();
+                    });
+
+            });
+    });
+
+    it('Should login failed', (done) => {
+        request(server)
+            .get('/login')
+            .end((err, res) => {
+                expect(err).to.not.exist;
+                expect(res.status).to.equal(200);
+
+                // Get csrf token
+                var $ = cheerio.load(res.text);
+                var csrfToken = $('input[name=_csrf]').val();
+                var cookie = res.headers['set-cookie'];
+                var formData = {
+                    username: 'test01',
+                    password: 'test01pwd',
+                    _csrf: csrfToken
+                };
+
+                // Modify an object
+                var stubbed = sinon.stub(DataBase, 'get').callsFake((option, callback) => {
+                    return callback(null);
+                });
+
+                request(server)
+                    .post('/login')
+                    .type('form')
+                    .set('Cookie', cookie)
+                    .send(formData)
+                    .end((err, res) => {
+                        expect(err).to.not.exist;
+                        expect(res.status).to.equal(200);
+                        expect(res.text).to.equal('login failed');
 
                         // Restore original method
                         stubbed.restore();
